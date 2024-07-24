@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, redirect
 from flask_login import login_required
 from .utils import history
 import os
@@ -19,21 +19,8 @@ generation_config = {
 }
 
 
-model = genai.GenerativeModel(
-  model_name="gemini-1.5-pro",
-  generation_config=generation_config,
-  # safety_settings = Adjust safety settings
-  # See https://ai.google.dev/gemini-api/docs/safety-settings
-  # safety_settings={
-  #       HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-  #       HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-  #       HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-  #       HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-  #       HarmCategory.HARM_CATEGORY_UNSPECIFIED: HarmBlockThreshold.BLOCK_NONE,
-  #   },
-  system_instruction="You are the user's best buddy. If there is a probability of unsafe content in model response, warn the user and generate a response without unsafe content.",
-)
-
+# system instructions - will tack on user's preferences after this
+system_instructions = "If there is a probability of unsafe content in model response, warn the user and generate a response without unsafe content."
 
 chat_routes = Blueprint('chat', __name__)
 
@@ -42,7 +29,7 @@ chat_routes = Blueprint('chat', __name__)
 #@login_required
 def test():
     """test route"""
-    return {"msg":"chat route entered", "history": history}, 200
+    return {"msg":"chat route entered", **history}, 200
 
 
 @chat_routes.route('/<int:chat_id>')
@@ -51,20 +38,38 @@ def load_chat(chat_id):
     """
     loads content of previously saved conversation
     """
-    # find the convo + associated messages
+    # TODO: find the convo + associated messages
     # return them
     global history
-    history = ["Message contents"]
+    history["history"] = ["Message contents"]
     return {"Conversation": [{"Message":"Message Contents"}]}, 200
 
 
-@chat_routes.route('/new')
+@chat_routes.route('/new', methods=["POST"])
 #@login_required
 def new_chat():
     """
     create a new conversation
     """
-    return
+    global model
+    model = genai.GenerativeModel(
+    model_name="gemini-1.5-pro",
+    generation_config=generation_config,
+    # safety_settings = Adjust safety settings
+    # See https://ai.google.dev/gemini-api/docs/safety-settings
+    # safety_settings={
+    #       HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    #       HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+    #       HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+    #       HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+    #       HarmCategory.HARM_CATEGORY_UNSPECIFIED: HarmBlockThreshold.BLOCK_NONE,
+    #   },
+    system_instruction="You are the user's best buddy." + system_instructions,
+    )
+
+    #TODO: create new convo
+
+    return redirect(str(1), 301)
 
 
 @chat_routes.route('/grammar/<int:msg_id>')

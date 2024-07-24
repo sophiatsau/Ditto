@@ -1,4 +1,5 @@
 # history: record / memory of conversation.
+# using an object so that it can be changed between files: logging out = clearing history
 """
 [
   {
@@ -7,4 +8,4 @@
   }
 ]
 """
-history = []
+history = {"history":[]}
