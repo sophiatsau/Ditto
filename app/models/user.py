@@ -14,6 +14,12 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+    conversations = db.relationship(
+        "Conversation",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
     @property
     def password(self):
         return self.hashed_password
@@ -29,5 +35,6 @@ class User(db.Model, UserMixin):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'conversations': [conversation.id for conversation in self.conversations], # list comprehension
         }

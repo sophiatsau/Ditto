@@ -3,6 +3,7 @@ from app.models import User, db
 from app.forms import LoginForm
 from app.forms import SignUpForm
 from flask_login import current_user, login_user, logout_user, login_required
+from .utils import history
 
 auth_routes = Blueprint('auth', __name__)
 
@@ -30,7 +31,7 @@ def login():
         # Add the user to the session, we are logged in!
         user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
-        return user.to_dict()
+        return user.to_dict(), 200
     return form.errors, 401
 
 
@@ -40,7 +41,10 @@ def logout():
     Logs a user out
     """
     logout_user()
-    return {'message': 'User logged out'}
+    # reset chat history
+    global history
+    history["history"]=[]
+    return {'message': 'User logged out'}, 200
 
 
 @auth_routes.route('/signup', methods=['POST'])
