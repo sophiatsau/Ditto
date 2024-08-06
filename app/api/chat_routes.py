@@ -99,6 +99,24 @@ def new_chat():
     return convo.to_dict(), 200
 
 
+@chat_routes.route('/<int:chat_id>/save', methods=["DELETE"])
+@login_required
+def delete_chat(chat_id):
+    """
+    delete a conversation
+    """
+    convo = Conversation.query.get(chat_id)
+    if not convo:
+        return {"error":"Conversation not found"}, 404
+    if convo.user_id != current_user.id:
+        return {"error":"Unauthorized"}, 401
+
+    db.session.delete(convo)
+    db.session.commit()
+
+    return {"message":"Conversation deleted"}, 200
+
+
 #***************** Messages *****************#
 @chat_routes.route('/<int:chat_id>/send', methods=["POST"])
 @login_required
