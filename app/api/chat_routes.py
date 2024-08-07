@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect
 from flask_login import login_required, current_user
-from .utils import history
+# from .utils import history
 import os
 import google.generativeai as genai
 # from google.generativeai.types import HarmCategory, HarmBlockThreshold
@@ -9,19 +9,19 @@ from app.models import db, Conversation, Message
 from app.forms import MessageForm, ConversationForm
 
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+# genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 # create, config model
-generation_config = {
-  "temperature": 0, # 0 = more factual, 1 = more creative
-  "top_p": 0.95,
-  "top_k": 64,
-  "max_output_tokens": 8192,
-  "response_mime_type": "text/plain", # "application/json"
-}
+# generation_config = {
+#   "temperature": 0, # 0 = more factual, 1 = more creative
+#   "top_p": 0.95,
+#   "top_k": 64,
+#   "max_output_tokens": 8192,
+#   "response_mime_type": "text/plain", # "application/json"
+# }
 
-model, chat_session = None, None
+# model, chat_session = None, None
 
 
 #***************** Routes *****************#
