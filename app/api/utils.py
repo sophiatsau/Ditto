@@ -8,6 +8,7 @@
   }
 ]
 """
+# TODO: delete this, update
 history = {"history":[]}
 
 

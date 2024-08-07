@@ -1,10 +1,25 @@
 from .db import db, environment, SCHEMA, add_prefix_for_prod
+import os
+
+import google.generativeai as genai
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# create, config model
+generation_config = {
+  "temperature": 0, # 0 = more factual, 1 = more creative
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain", # "application/json"
+}
 
 class Conversation(db.Model):
     """
     Conversation between user and chatbot, one-to-many relationship with messages
     """
     __tablename__ = "conversations"
+    __chatbot_info__ = {} # save models
+    __chat_session_info__ = {} # save chat sessions
 
     if environment == "production":
         __table_args__ = {'schema': SCHEMA}
@@ -12,6 +27,9 @@ class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     system_instructions = db.Column(db.String(255), nullable=False, default="If there is a probability of unsafe content in model response, warn the user and generate a response without unsafe content.")
+
+    # def __init__(self):
+    #     self.chatbot, self.chat_session = None, None
 
     user = db.relationship(
         "User",
@@ -24,11 +42,28 @@ class Conversation(db.Model):
         cascade="all, delete-orphan"
     )
 
-    def to_history(self):
+    @property
+    def history(self):
         """format for history object"""
-        return {
-            'history': [message.to_history() for message in self.messages],
-        }
+        return [message.to_history() for message in self.messages]
+    
+    @property
+    def chatbot(self):
+        """return ai model for this conversation"""
+        if not self.__chatbot_info__.get(self.user_id):
+            self.__chatbot_info__[self.user_id] = genai.GenerativeModel(
+                model_name="gemini-1.5-pro",
+                generation_config=generation_config,
+                system_instruction=self.system_instructions,
+            )
+        return self.__chatbot_info__[self.user_id]
+    
+    @property
+    def chat_session(self):
+        """return chat session for this conversation"""
+        if not self.__chat_session_info__.get(self.user_id):
+            self.__chat_session_info__[self.user_id] = self.chatbot.start_chat(history = self.history)
+        return self.__chat_session_info__[self.user_id]
 
     def to_dict(self):
         return {

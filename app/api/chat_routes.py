@@ -48,16 +48,6 @@ def load_chat(chat_id):
     if convo.user_id != current_user.id:
         return {"error":"Unauthorized"}, 401
 
-    global model
-    model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro",
-    generation_config=generation_config,
-    system_instruction=convo.system_instructions,
-    )
-    
-    history["history"] = convo.to_history()["history"]
-    global chat_session
-    chat_session = model.start_chat(history=history["history"])
     return {"Conversation": convo.to_dict()}, 200
 
 
@@ -75,18 +65,6 @@ def new_chat():
         system_instructions = form.system_instructions.data
     else:
         return {"errors":form.errors}, 400
-
-    global model
-    model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro",
-    generation_config=generation_config,
-    system_instruction=system_instructions,
-    )
-
-    global chat_session
-    global history
-    history["history"] = []
-    chat_session = model.start_chat(history=[])
 
     convo = Conversation(
         user_id=current_user.id,
@@ -138,15 +116,8 @@ def send_message(chat_id):
     else:
         return {"errors":form.errors}, 400
 
-    # send message to model
-    # TODO: chat session created in here instead of global
-    global chat_session
-    response = chat_session.send_message(input)
-
-    # add response to history
-    global history
-    history["history"].append({"role":"user", "parts":[input]})
-    history["history"].append({"role":"model", "parts":[response.text]})
+    # send message to model + get response
+    response = convo.chat_session.send_message(input)
 
     # create messages + add to db
     user_msg = Message(
