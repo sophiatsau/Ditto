@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, session
 from flask_login import login_required, current_user
 # from .utils import history
+from app.utils.ai_utils import grammar_bot, dictionary_bot, social_context_bot, example_response_bot
 import os
 import google.generativeai as genai
 # from google.generativeai.types import HarmCategory, HarmBlockThreshold
@@ -155,12 +156,16 @@ def send_message(chat_id):
     return [user_msg.to_dict(), model_msg.to_dict()], 200
 
 
-# TODO: a grammar / spelling / context checking bot?
+#***************** FEEDBACK BOTS *****************#
 @chat_routes.route('/grammar/<int:msg_id>')
 @login_required
 def check_grammar(msg_id):
     """
     check grammar for a specific message
     """
-    # use a different model with instructions to check grammar
-    # return grammar feedback for specific msg
+    message = Message.query.get(msg_id)
+    if not message:
+        return {"error":"Message not found"}, 404
+    response = grammar_bot.generate_content(f"{{message: {message.text}}}")
+    res = response.text
+    return res, 200
