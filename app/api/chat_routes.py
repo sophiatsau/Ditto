@@ -161,7 +161,11 @@ def send_message(chat_id):
 @login_required
 def check_grammar(msg_id):
     """
-    check grammar for a specific message
+    check grammar for a specific message and return {
+        "errors_present": "bool", 
+        "corrected_message": "str", 
+        "explanation": "str"
+    }
     """
     message = Message.query.get(msg_id)
     if not message:
@@ -175,7 +179,11 @@ def check_grammar(msg_id):
 @login_required
 def get_definition(msg_id, word):
     """
-    get definition of a specific word in the context of a message
+    get definition of a specific word in the context of a message and return {
+        "definition": "str", 
+        "part_of_speech": "str", 
+        "example_sentence": "str"
+    }
     """
     message = Message.query.get(msg_id)
     if not message:
@@ -183,5 +191,23 @@ def get_definition(msg_id, word):
     if not word or word not in message.text:
         return {"error": "Word not found in message"}, 400
     response = dictionary_bot.generate_content(f"{{word: {word}, context: {message.text}}}")
+    res = response.text
+    return res, 200
+
+
+@chat_routes.route('/<int:chat_id>/message/<int:msg_id>/social')
+@login_required
+def check_social_context(chat_id, msg_id):
+    """
+    check social appropriateness of a specific message in context of the conversation and return {"response": "str"}
+    """
+    convo = Conversation.query.get(chat_id)
+    history = convo.history
+    if not convo:
+        return {"error": "Conversation not found"}, 404
+    [message] = [msg for msg in convo.messages if msg.id == msg_id]
+    if not message:
+        return {"error": "Message not found"}, 404
+    response = social_context_bot.generate_content(f"{{message:{message.text}, message_history: {history}, receiver_role: convo.system_instructions}}")
     res = response.text
     return res, 200

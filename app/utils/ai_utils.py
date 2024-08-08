@@ -48,38 +48,12 @@ social_context_bot = genai.GenerativeModel(
     generation_config=generate_config(TypedDict("SocialContextSchema", {
         "response": "str"
     })),
-    system_instruction="Given a message, message history, and social context in the format of {message:message, messageHistory: [{role:role, text:message}], socialContext: {user: messageSender, receiver: messageReceiver, situation: situation}}, generate a response that analyzes how the user's message might be received in the context of the message history and how appropriate the message is. The response should include information about the social norms and expectations that are relevant to the situation presented in the message history and social context.",
+    system_instruction="Given a message, message history, and social context in the format of {message:message, messageHistory: [{role:role, text:message}], receiver_role: receiver_role_details}, generate a response that analyzes how the user's message might be received in the context of the message history and how appropriate the message is. The response should include information about the social norms and expectations that are relevant to the situation presented in the message history and social context. Keep the response under 1000 characters.",
 )
 
 # example response bot
 example_response_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generate_config(TypedDict("ExampleResponseSchema", {"example_response": "str", "explanation": "str"})),
-    system_instruction="Given a message, message history, and social context in the format of {message:message from conversation partner, messageHistory: [{role:role, text:message}], socialContext: {user: messageReceiver, conversationPartner: messageSender, situation: situation}},  generate an example response to the message that the user could use in the given social context. The response should include an explanation regarding what the conversation partner might expect from the user's response and what the model's example response communicates.",
+    system_instruction="Given a message, message history, and social context in the format of {message:message from conversation partner, messageHistory: [{role:role, text:message}], socialContext: {user: messageReceiver, conversationPartner: messageSender, situation: situation}},  generate an example response to the message that the user could use in the given social context. The response should include an explanation regarding what the conversation partner might expect from the user's response and what the model's example response communicates. The example response should be 255 characters or less.",
 )
-
-
-"""
-chat_histories = {
- [user_id]: {
-    chat_id: {
-      ChatBot Class
-    }
- }
-}
-
-
-class ChatBot():
-    def __init__(self, prompt, user):
-        # initiate conversation with prompt and user
-        self.chat_session = ChatSession()
-    
-    def send_message(self, input):
-        response = self.chat_session.send_message(input)
-        # add response to history
-        history["history"].append({"role":"user", "parts":[input]})
-        history["history"].append({"role":"model", "parts":[response.text]})
-        return response
-
-
-"""
