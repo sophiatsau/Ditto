@@ -169,3 +169,19 @@ def check_grammar(msg_id):
     response = grammar_bot.generate_content(f"{{message: {message.text}}}")
     res = response.text
     return res, 200
+
+
+@chat_routes.route('/message/<int:msg_id>/definition/<word>')
+@login_required
+def get_definition(msg_id, word):
+    """
+    get definition of a specific word in the context of a message
+    """
+    message = Message.query.get(msg_id)
+    if not message:
+        return {"error": "Message not found"}, 404
+    if not word or word not in message.text:
+        return {"error": "Word not found in message"}, 400
+    response = dictionary_bot.generate_content(f"{{word: {word}, context: {message.text}}}")
+    res = response.text
+    return res, 200

@@ -34,11 +34,11 @@ grammar_bot = genai.GenerativeModel(
 # definition bot
 dictionary_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
-    # generation_config=generate_config({
-    #     "definition": "str", 
-    #     "part_of_speech": "str", 
-    #     "exampleSentence": "str"
-    # }),
+    generation_config=generate_config(TypedDict("DictionarySchema", {
+        "definition": "str", 
+        "part_of_speech": "str", 
+        "example_sentence": "str"
+    })),
     system_instruction="Given a word and a context in the format of {word: word, context: message}, generate a response that provides the definition of the word, and uses the word in an example sentence.",
 )
 
