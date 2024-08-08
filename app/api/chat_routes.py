@@ -211,3 +211,21 @@ def check_social_context(chat_id, msg_id):
     response = social_context_bot.generate_content(f"{{message:{message.text}, message_history: {history}, receiver_role: convo.system_instructions}}")
     res = response.text
     return res, 200
+
+
+@chat_routes.route('/<int:chat_id>/message/<int:msg_id>/response')
+@login_required
+def generate_example_response(chat_id, msg_id):
+    """
+    generate example response for a specific message in context of the conversation and return {"example_response": "str", "explanation": "str"}
+    """
+    convo = Conversation.query.get(chat_id)
+    history = convo.history
+    if not convo:
+        return {"error": "Conversation not found"}, 404
+    [message] = [msg for msg in convo.messages if msg.id == msg_id]
+    if not message:
+        return {"error": "Message not found"}, 404
+    response = example_response_bot.generate_content(f"{{message:{message.text}, message_history: {history}, conversation_partner_role: {convo.system_instructions}}}")
+    res = response.text
+    return res, 200
