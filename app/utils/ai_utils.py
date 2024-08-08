@@ -8,35 +8,35 @@ generation_config = {
   "top_p": 0.95,
   "top_k": 64,
   "max_output_tokens": 8192,
-  "response_mime_type": "text/plain", # "application/json"
+  "response_mime_type": "application/json", # "application/json"
 }
 
 # grammar bot
 grammar_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
-    system_instruction="Given a sentence, generate a response that corrects and explains any grammatical errors in the sentence. Praise the user if the sentence is grammatically correct.",
+    system_instruction="Given a message in the format of {message: message}, generate a response that corrects any grammatical errors in the message and explains what grammar rules are broken. Format the response as {errors: Boolean, corrected_message: corrected message, explanation: explanation}. If the sentence is grammatically correct, the response should be {errors: false, corrected_message: null, explanation: null}.",
 )
 
 # definition bot
 dictionary_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
-    system_instruction="Given a word and a context in the format of {word: word, context: message}, generate a response that provides the definition of the word, and uses the word in an example sentence.",
+    system_instruction="Given a word and a context in the format of {word: word, context: message}, generate a response that provides the definition of the word, and uses the word in an example sentence. The response should be formatted as {definition: definition, partOfSpeech: partOfSpeech, example: exampleSentence}.",
 )
 
 # social context bot
 social_context_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
-    system_instruction="Given a message, message history, and social context in the format of {message:message, message_history: [], social_context: {sender: person saying the message, receiver: person receiving the message, situation: situation}}, generate a response that analyzes how the message might be received in the context of the message history and how appropriate the message is. The response should include information about the social norms and expectations that are relevant to the situation presented in the message history and social context.",
+    system_instruction="Given a message, message history, and social context in the format of {message:message, messageHistory: [{role:role, text:message}], socialContext: {user: messageSender, receiver: messageReceiver, situation: situation}}, generate a response that analyzes how the user's message might be received in the context of the message history and how appropriate the message is. The response should include information about the social norms and expectations that are relevant to the situation presented in the message history and social context. Format the response as {response: response}.",
 )
 
 # example response bot
 example_response_bot = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
-    system_instruction="Given a message and social context in the format of {message: message, social_context: social_context}, generate an example response to the message in the given social context. The response should include information about the context in which the sentence is used, and the people who might use it.",
+    system_instruction="Given a message, message history, and social context in the format of {message:message from conversation partner, messageHistory: [{role:role, text:message}], socialContext: {user: messageReceiver, conversationPartner: messageSender, situation: situation}},  generate an example response to the message that the user could use in the given social context. The response should include an explanation regarding what the conversation partner might expect from the user's response and what the model's example response communicates. The response should be formatted as {response: response, explanation: explanation}.",
 )
 
 
