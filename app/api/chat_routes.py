@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect
+from flask import Blueprint, request, redirect, session
 from flask_login import login_required, current_user
 # from .utils import history
 import os
@@ -13,16 +13,15 @@ from app.forms import MessageForm, ConversationForm
 
 
 # create, config model
-# generation_config = {
-#   "temperature": 0, # 0 = more factual, 1 = more creative
-#   "top_p": 0.95,
-#   "top_k": 64,
-#   "max_output_tokens": 8192,
-#   "response_mime_type": "text/plain", # "application/json"
-# }
+generation_config = {
+  "temperature": 0, # 0 = more factual, 1 = more creative
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain", # "application/json"
+}
 
 # model, chat_session = None, None
-
 
 #***************** Routes *****************#
 chat_routes = Blueprint('chat', __name__)
@@ -35,18 +34,36 @@ def test():
     return {"msg":"chat route entered", **history}, 200
 
 
+#***************** AI Utils *****************#
+# @chat_routes.before_request
+# def load_user_model():
+#     if "user_model" not in session:
+#         Conversation.__chatbot_info__[f"user_model_{current_user.id}"] = genai.GenerativeModel(
+#             model_name="gemini-1.5-pro",
+#             generation_config=generation_config,
+#             system_instruction="If there is a probability of unsafe content in model response, warn the user and generate a response without unsafe content.",
+#         )
+
+
 #***************** Conversations *****************#
-@chat_routes.route('/<int:chat_id>')
+@chat_routes.route('/<int:conversation_id>')
 @login_required
-def load_chat(chat_id):
+def load_conversation(conversation_id):
     """
     loads content of previously saved conversation
     """
-    convo = Conversation.query.get(chat_id)
+
+    # retrieve conversation
+    convo = Conversation.query.get(conversation_id)
     if not convo:
         return {"error":"Conversation not found"}, 404
     if convo.user_id != current_user.id:
         return {"error":"Unauthorized"}, 401
+    
+    # get or load model
+    # model = session.get(f"convo_session_{conversation_id}")
+    # if not model:
+    #     session[f"convo_session_{conversation_id}"] = convo.get_convo_session()
 
     return {"Conversation": convo.to_dict()}, 200
 
@@ -117,7 +134,7 @@ def send_message(chat_id):
         return {"errors":form.errors}, 400
 
     # send message to model + get response
-    response = convo.chat_session.send_message(input)
+    response = convo.get_convo_session().send_message(input)
 
     # create messages + add to db
     user_msg = Message(

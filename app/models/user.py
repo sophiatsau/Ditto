@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
         "Conversation",
         back_populates="user",
         cascade="all, delete-orphan",
+        lazy=True,
     )
 
     @property
