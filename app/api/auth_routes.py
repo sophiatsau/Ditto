@@ -30,7 +30,7 @@ def login():
         # Add the user to the session, we are logged in!
         user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
-        return user.to_dict()
+        return user.to_dict(), 200
     return form.errors, 401
 
 
@@ -40,7 +40,7 @@ def logout():
     Logs a user out
     """
     logout_user()
-    return {'message': 'User logged out'}
+    return {'message': 'User logged out'}, 200
 
 
 @auth_routes.route('/signup', methods=['POST'])
