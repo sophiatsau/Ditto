@@ -1,3 +1,5 @@
+
+
 FROM python:3.9.18-alpine3.18
 
 RUN apk add build-base
@@ -19,7 +21,7 @@ RUN pip install -r requirements.txt
 RUN pip install psycopg2
 
 COPY . .
-COPY --from=build /react-vite /var/www/react-vite
+# COPY --from=build . /var/www/react-vite
 RUN flask db upgrade
 RUN flask seed all
 CMD gunicorn app:app

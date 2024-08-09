@@ -60,11 +60,6 @@ def load_conversation(conversation_id):
         return {"error":"Conversation not found"}, 404
     if convo.user_id != current_user.id:
         return {"error":"Unauthorized"}, 401
-    
-    # get or load model
-    # model = session.get(f"convo_session_{conversation_id}")
-    # if not model:
-    #     session[f"convo_session_{conversation_id}"] = convo.get_convo_session()
 
     return {"Conversation": convo.to_dict()}, 200
 
