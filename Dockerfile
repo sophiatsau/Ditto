@@ -19,7 +19,6 @@ RUN pip install -r requirements.txt
 RUN pip install psycopg2
 
 COPY . .
-COPY --from=build /react-vite /var/www/react-vite
 RUN flask db upgrade
 RUN flask seed all
 CMD gunicorn app:app
