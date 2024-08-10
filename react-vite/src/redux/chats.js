@@ -73,6 +73,8 @@ export const thunkSendMessage = (text) => async (dispatch) => {
     return data;
 }
 
+export const consumeOneChat = (chatId) => (state) => state.chats[chatId];
+
 const initialState = {};
 
 function chatReducer(state = initialState, action) {
