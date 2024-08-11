@@ -40,8 +40,8 @@ const backendConfig = {
     // max time to wait for assertions
     timeout: 5000,
   },
-  // display the results
-  reporter: "html",
+  // display the results , only uncomment when test are done being written bc its to troublesome if not
+  // reporter: "html",
   // settings
   use: {
     // Base URL to use in actions like `await page.goto('/')`.
