@@ -7,10 +7,19 @@ test.describe("Flask App", () => {
   test("should Authenticates a user.", async ({ request }) => {
     const response = await request.get(`${baseURL}/api/`, {});
     console.log("=========".repeat(4));
-    console.log("response: ", response);
+    // console.log("response: ", response);
     console.log("=========".repeat(4));
 
     expect(response.status()).toBe(200);
-    expect(response)
+    console.log("response: ", response);
+
+  });
+
+  test("should not Authenticates a user.", async ({ request }) => {
+    const response = await request.get(`${baseURL}/api/`, {});
+
+    expect(response.status()).toBe(401);
+    const responseBody = await response.json();
+    expect(responseBody.errors.message).toBe("Unauthorized");
   });
 });
