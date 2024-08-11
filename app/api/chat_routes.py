@@ -35,17 +35,6 @@ def test():
     return {"msg":"chat route entered", **history}, 200
 
 
-#***************** AI Utils *****************#
-# @chat_routes.before_request
-# def load_user_model():
-#     if "user_model" not in session:
-#         Conversation.__chatbot_info__[f"user_model_{current_user.id}"] = genai.GenerativeModel(
-#             model_name="gemini-1.5-pro",
-#             generation_config=generation_config,
-#             system_instruction="If there is a probability of unsafe content in model response, warn the user and generate a response without unsafe content.",
-#         )
-
-
 #***************** Conversations *****************#
 @chat_routes.route('/<int:conversation_id>')
 @login_required
@@ -56,17 +45,10 @@ def load_conversation(conversation_id):
 
     # retrieve conversation
     convo = Conversation.query.get(conversation_id)
-    if not convo:
+    if not convo or convo.user_id != current_user.id:
         return {"error":"Conversation not found"}, 404
-    if convo.user_id != current_user.id:
-        return {"error":"Unauthorized"}, 401
-    
-    # get or load model
-    # model = session.get(f"convo_session_{conversation_id}")
-    # if not model:
-    #     session[f"convo_session_{conversation_id}"] = convo.get_convo_session()
 
-    return {"Conversation": convo.to_dict()}, 200
+    return {"conversation": convo.to_dict()}, 200
 
 
 @chat_routes.route('/new', methods=["POST"])
@@ -92,20 +74,18 @@ def new_chat():
     db.session.add(convo)
     db.session.commit()
 
-    return convo.to_dict(), 200
+    return {"conversation": convo.to_dict()}, 200
 
 
-@chat_routes.route('/<int:chat_id>/save', methods=["DELETE"])
+@chat_routes.route('/<int:chat_id>/delete', methods=["DELETE"])
 @login_required
 def delete_chat(chat_id):
     """
     delete a conversation
     """
     convo = Conversation.query.get(chat_id)
-    if not convo:
+    if not convo or convo.user_id != current_user.id:
         return {"error":"Conversation not found"}, 404
-    if convo.user_id != current_user.id:
-        return {"error":"Unauthorized"}, 401
 
     db.session.delete(convo)
     db.session.commit()
@@ -153,7 +133,7 @@ def send_message(chat_id):
     db.session.add_all([user_msg, model_msg])
     db.session.commit()
 
-    return [user_msg.to_dict(), model_msg.to_dict()], 200
+    return {"messages": [user_msg.to_dict(), model_msg.to_dict()], "chat_id": chat_id}, 200
 
 
 #***************** FEEDBACK BOTS *****************#
