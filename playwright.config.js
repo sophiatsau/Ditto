@@ -64,4 +64,11 @@ const backendConfig = {
 const selectedConfig =
   process.env.TEST_ENV === "backend" ? backendConfig : frontendConfig;
 
+/*
+=== Backend test command ===
+
+TEST_ENV=backend npx playwright test
+
+
+*/
 export default selectedConfig;
