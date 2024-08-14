@@ -17,5 +17,10 @@ https://ditto-wur4.onrender.com
 <!-- ## Screenshots -->
 
 ## Endpoints
+### Auth
+| Request | Purpose | Return Value | Status |
+| :------ | :------ | :----------- | :----- |
+| GET /api/auth/ | On initial load and subsequent refreshes, confirms if a user is authenticated and returns logged in user if there is one. | {<br/>&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;"username": STRING,<br/>&nbsp;&nbsp;"email": STRING,<br/>&nbsp;&nbsp;"conversations": [ARRAY of INT]<br/>} | 200 |
+| GET /api/auth/login | On initial load and subsequent refreshes, confirms if a user is authenticated and returns logged in user if there is one. | {<br/>&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;"username": STRING,<br/>&nbsp;&nbsp;"email": STRING,<br/>&nbsp;&nbsp;"conversations": [ARRAY of INT]<br/>} | 200 |
 
 <!-- ## Connect With Us! -->
