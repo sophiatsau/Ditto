@@ -74,7 +74,7 @@ def new_chat():
     db.session.add(convo)
     db.session.commit()
 
-    return {"conversation": convo.to_dict()}, 200
+    return {"conversation": convo.to_dict()}, 201
 
 
 @chat_routes.route('/<int:chat_id>/delete', methods=["DELETE"])
@@ -133,7 +133,7 @@ def send_message(chat_id):
     db.session.add_all([user_msg, model_msg])
     db.session.commit()
 
-    return {"messages": [user_msg.to_dict(), model_msg.to_dict()], "chat_id": chat_id}, 200
+    return {"messages": [user_msg.to_dict(), model_msg.to_dict()], "chat_id": chat_id}, 201
 
 
 #***************** FEEDBACK BOTS *****************#
