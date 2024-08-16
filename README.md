@@ -35,7 +35,14 @@ https://ditto-wur4.onrender.com
 ### Messages
 | Request | Purpose | Return Value | Status |
 | :------ | :------ | :----------- | :----- |
-| POST /api/chats/:chatId/send | Obtains a response from the model based on user's message. Creates two new messages in the conversation, one from the user's message and one from the model's response, and returns both. | {<br/>&nbsp;&nbsp;"messages": [{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "user",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}, {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "model",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}]<br/>} | 200 |
+| POST /api/chats/:chatId/send | Obtains a response from the model based on user's message. Creates two new messages in the conversation, one from the user's message and one from the model's response, and returns both. | {<br/>&nbsp;&nbsp;"messages": [{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "user",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}, {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "model",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}]<br/>} | 201 |
 
+### Feedback Bots
+| Request | Purpose | Return Value | Status |
+| :------ | :------ | :----------- | :----- |
+| GET /api/chats/grammar/:msgId | Check grammar for a specific message and return analysis of message's grammar. | {<br/>&nbsp;&nbsp;"errors_present": BOOL,<br/>&nbsp;&nbsp;"corrected_message": STRING,<br/>&nbsp;&nbsp;"explanation": STRING<br/>} | 200 |
+| GET /api/chats/message/:msgId/definition/:word | Return definition of a specific word as used in the context of a message. | {<br/>&nbsp;&nbsp;"definition": STRING,<br/>&nbsp;&nbsp;"part_of_speech": STRING,<br/>&nbsp;&nbsp;"example_sentence": STRING<br/>} | 200 |
+| GET /api/chats/:chatId/message/:msgId/social | Return analysis of social appropriateness of a specific message in the context of the conversation. | {"response": STRING<br/>} | 200 |
+| GET /api/chats/:chatId/message/:msgId/response | Generate and return an example response for a specific message in context of the conversation. | {<br/>&nbsp;&nbsp;"example_response": STRING,<br/>&nbsp;&nbsp;"explanation": STRING<br/>} | 200 |
 
 <!-- ## Connect With Us! -->
