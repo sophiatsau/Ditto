@@ -28,10 +28,8 @@ https://ditto-wur4.onrender.com
 ### Chats
 | Request | Purpose | Return Value | Status |
 | :------ | :------ | :----------- | :----- |
-| GET /api/chats/:chatId | Queries for and returns conversation by id. | ```json
-{
-"conversation": INT,<br/>&nbsp;&nbsp;"username": STRING,<br/>&nbsp;&nbsp;"email": STRING,<br/>&nbsp;&nbsp;"conversations": [ARRAY of INT]<br/>
-}
-``` | 200 |
+| GET /api/chats/:chatId | Queries for and returns conversation by id. | {<br/>&nbsp;&nbsp;"conversation": {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"user_id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"system_instructions": STRING,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"history": [ARRAY of MESSAGE OBJ]<br/>&nbsp;&nbsp;}<br/>} | 200 |
+| POST /api/chats/new | Creates a new conversation and returns the conversation. | {<br/>&nbsp;&nbsp;"conversation": {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"user_id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"system_instructions": STRING,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"history": []<br/>&nbsp;&nbsp;}<br/>} | 200 |
+| DELETE /api/chats/:chatId/delete | Deletes a conversation and returns a message if successfully deleted. | {<br/>&nbsp;&nbsp;"message": "Address successfully deleted."<br/>} | 200 |
 
 <!-- ## Connect With Us! -->
