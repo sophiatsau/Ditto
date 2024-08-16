@@ -74,7 +74,7 @@ def new_chat():
     db.session.add(convo)
     db.session.commit()
 
-    return {"conversation": convo.to_dict()}, 200
+    return {"conversation": convo.to_dict()}, 201
 
 
 @chat_routes.route('/<int:chat_id>/delete', methods=["DELETE"])

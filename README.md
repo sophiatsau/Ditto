@@ -32,4 +32,10 @@ https://ditto-wur4.onrender.com
 | POST /api/chats/new | Creates a new conversation and returns the conversation. | {<br/>&nbsp;&nbsp;"conversation": {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"user_id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"system_instructions": STRING,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"history": []<br/>&nbsp;&nbsp;}<br/>} | 200 |
 | DELETE /api/chats/:chatId/delete | Deletes a conversation and returns a message if successfully deleted. | {<br/>&nbsp;&nbsp;"message": "Address successfully deleted."<br/>} | 200 |
 
+### Messages
+| Request | Purpose | Return Value | Status |
+| :------ | :------ | :----------- | :----- |
+| POST /api/chats/:chatId/send | Obtains a response from the model based on user's message. Creates two new messages in the conversation, one from the user's message and one from the model's response, and returns both. | {<br/>&nbsp;&nbsp;"messages": [{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "user",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}, {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": INT,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"role": "model",<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"parts": [STRING]<br/>&nbsp;&nbsp;}]<br/>} | 200 |
+
+
 <!-- ## Connect With Us! -->
